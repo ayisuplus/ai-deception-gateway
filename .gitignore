@@ -1,0 +1,9 @@
+node_modules/
+plugins/
+skills/
+.codex-plugin/
+.tmp/
+benchmark-results.json
+*.log
+.DS_Store
+Thumbs.db

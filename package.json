@@ -1,0 +1,21 @@
+{
+  "name": "ai-deception-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vendor-neutral AI crawler deception gateway and benchmark prototype",
+  "type": "module",
+  "exports": {
+    ".": "./src/app.js",
+    "./middleware": "./src/middleware.js",
+    "./edge": "./edge/worker.core.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "preview:embed": "node test/fixtures/embed-preview.js",
+    "benchmark": "node benchmark/run.js",
+    "test": "node --test test/*.test.js"
+  }
+}

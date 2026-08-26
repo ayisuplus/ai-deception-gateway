@@ -1,0 +1,34 @@
+# Cloudflare Workers deployment for the AI deception gateway.
+# The worker keeps the full request-layer shield (classification, trap
+# injection, labyrinth/honey-archive decoys, admin API) at the edge — the
+# origin only ever sees verified/allowed traffic.
+
+name = "ai-deception-gateway"
+main = "edge/worker.js"
+compatibility_date = "2026-08-01"
+
+# Required: the gateway uses node:crypto (HMAC tokens, AES-GCM decoys) and
+# node:buffer throughout src/.
+compatibility_flags = ["nodejs_compat"]
+
+# edge/worker.js imports the browser asset as a text module.
+rules = [
+  { type = "Text", globs = ["**/black-hole.v1.js"] },
+]
+
+# REQUIRED secrets — set with `wrangler secret put`:
+#   AIDG_TOKEN_SECRET      tokens must verify across isolates; random per-isolate
+#                          secrets (the local default) break every trap link.
+#   AIDG_FINGERPRINT_SALT  stable anonymous fingerprints.
+#   AIDG_ADMIN_TOKEN       without it the admin API answers 403 to every
+#                          non-loopback address (which at the edge is everyone).
+#
+# Optional vars (see README 配置 table for the full list):
+# [vars]
+# AIDG_MODE = "labyrinth"
+# AIDG_ORIGIN_URL = "https://your-site.example/"
+# AIDG_OBSERVE_ONLY = "false"
+#
+# Telemetry note: counters, fingerprints and rate-limit marks live in
+# per-isolate memory. Blocking works but is isolate-local until a KV /
+# Durable Object adapter lands behind the Map-like seam in src/shared-state.js.
